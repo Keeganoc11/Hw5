@@ -1,18 +1,24 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import SearchBox from './components/SearchBox';
 import logo from './logo.svg';
 import './App.css';
-import axios from 'axios';
+import Login from './components/Login'; // Make sure to import Login
+import StudentTable from './components/StudentTable'; // Make sure to import StudentTable
 
 function App() {
+  const [token, setToken] = useState(null);
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredStudents, setFilteredStudents] = useState([]);
 
   useEffect(() => {
     // Fetch students when component mounts
-    fetchStudents();
-  }, []);
+    if (token) {
+      fetchStudents();
+    }
+  }, [token]); // Dependency on token
 
   useEffect(() => {
     // Filter students whenever the search term changes
@@ -39,13 +45,15 @@ function App() {
     setSearchTerm(event.target.value.toLowerCase());
   };
 
+  if (!token) {
+    return <Login setToken={setToken} />;
+  }
+
   return (
     <div className="App">
       <header className="App-header">
         <SearchBox onSearchChange={handleSearchChange} value={searchTerm} />
-
         <img src={logo} className="App-logo" alt="logo" />
-        
         <table>
           <thead>
             <tr>
